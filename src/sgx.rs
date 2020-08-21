@@ -144,7 +144,7 @@ impl Display for SgxTargetInfo {
         writeln!(f, "reserved2        : {}", hex::encode(self.reserved2))?;
         write!(f, "config_id        : {}", hex::encode(&self.config_id[..]))?;
         #[cfg(feature = "verbose")]
-        write!(f, "reserved3        : {}", hex::encode(self.reserved3))?;
+        write!(f, "reserved3        : {}", hex::encode(&self.reserved3[..]))?;
         Ok(())
     }
 }
@@ -196,7 +196,7 @@ impl Display for SgxReportBody {
         writeln!(f, " isv_svn          : {:02x}", self.isv_svn)?;
         writeln!(f, " config_svn       : {:02x}", self.config_svn)?;
         #[cfg(feature = "verbose")]
-        writeln!(f, " reserved4        : {}", hex::encode(self.reserved4))?;
+        writeln!(f, " reserved4        : {}", hex::encode(&self.reserved4[..]))?;
         writeln!(f, " isv_family_id    : {}", hex::encode(self.isv_family_id))?;
         write!(f, " report_data      : {}", hex::encode(&self.report_data[..]))
     }
