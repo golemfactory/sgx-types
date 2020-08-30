@@ -1,6 +1,6 @@
 use byteorder::{LittleEndian, ReadBytesExt};
 use hex;
-use std::fmt::{self, Display, Formatter};
+use std::fmt::{self, Debug, Formatter};
 use std::io::{Cursor, Error, ErrorKind, Read, Result};
 use std::mem;
 
@@ -130,7 +130,7 @@ pub fn expand_report_data(user_data: &[u8]) -> Result<SgxReportData> {
     Ok(report_data)
 }
 
-impl Display for SgxTargetInfo {
+impl Debug for SgxTargetInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "")?;
         writeln!(f, "mr_enclave       : {}", hex::encode(self.mr_enclave))?;
@@ -172,7 +172,7 @@ impl SgxTargetInfo {
     }
 }
 
-impl Display for SgxReportBody {
+impl Debug for SgxReportBody {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, " cpu_svn          : {}", hex::encode(self.cpu_svn))?;
         writeln!(f, " misc_select      : {:02x}", self.misc_select)?;
@@ -191,14 +191,26 @@ impl Display for SgxReportBody {
         writeln!(f, " mr_signer        : {}", hex::encode(self.mr_signer))?;
         #[cfg(feature = "verbose")]
         writeln!(f, " reserved3        : {}", hex::encode(self.reserved3))?;
-        writeln!(f, " config_id        : {}", hex::encode(&self.config_id[..]))?;
+        writeln!(
+            f,
+            " config_id        : {}",
+            hex::encode(&self.config_id[..])
+        )?;
         writeln!(f, " isv_prod_id      : {:02x}", self.isv_prod_id)?;
         writeln!(f, " isv_svn          : {:02x}", self.isv_svn)?;
         writeln!(f, " config_svn       : {:02x}", self.config_svn)?;
         #[cfg(feature = "verbose")]
-        writeln!(f, " reserved4        : {}", hex::encode(&self.reserved4[..]))?;
+        writeln!(
+            f,
+            " reserved4        : {}",
+            hex::encode(&self.reserved4[..])
+        )?;
         writeln!(f, " isv_family_id    : {}", hex::encode(self.isv_family_id))?;
-        write!(f, " report_data      : {}", hex::encode(&self.report_data[..]))
+        write!(
+            f,
+            " report_data      : {}",
+            hex::encode(&self.report_data[..])
+        )
     }
 }
 
@@ -228,9 +240,9 @@ impl SgxReportBody {
     }
 }
 
-impl Display for SgxReport {
+impl Debug for SgxReport {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        writeln!(f, "\nreport_body:\n{}", self.body)?;
+        writeln!(f, "\nreport_body:\n{:?}", self.body)?;
         writeln!(f, "key_id           : {}", hex::encode(self.key_id))?;
         write!(f, "mac              : {}", hex::encode(self.mac))
     }
@@ -253,17 +265,21 @@ impl SgxReport {
     }
 }
 
-impl Display for SgxQuote {
+impl Debug for SgxQuote {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         writeln!(f, "")?;
         writeln!(f, "version           : {:02x}", self.body.version)?;
         writeln!(f, "sign_type         : {:02x}", self.body.sign_type)?;
-        writeln!(f, "epid_group_id     : {}", hex::encode(self.body.epid_group_id))?;
+        writeln!(
+            f,
+            "epid_group_id     : {}",
+            hex::encode(self.body.epid_group_id)
+        )?;
         writeln!(f, "qe_svn            : {:02x}", self.body.qe_svn)?;
         writeln!(f, "pce_svn           : {:02x}", self.body.pce_svn)?;
         writeln!(f, "xeid              : {:04x}", self.body.xeid)?;
         writeln!(f, "basename          : {}", hex::encode(self.body.basename))?;
-        writeln!(f, "report_body       :\n{}", self.body.report_body)?;
+        writeln!(f, "report_body       :\n{:?}", self.body.report_body)?;
         write!(f, "signature_len     : {:04x}", self.signature_len)
     }
 }
@@ -303,7 +319,9 @@ impl SgxQuote {
         } else {
             let sig_len = reader.read_u32::<LittleEndian>()?;
 
-            if quote_size != mem::size_of::<SgxQuoteBody>() + mem::size_of::<u32>() + sig_len as usize {
+            if quote_size
+                != mem::size_of::<SgxQuoteBody>() + mem::size_of::<u32>() + sig_len as usize
+            {
                 return Err(Error::from(ErrorKind::InvalidData));
             }
 
