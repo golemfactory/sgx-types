@@ -150,7 +150,7 @@ impl Display for SgxTargetInfo {
 }
 
 impl SgxTargetInfo {
-    pub fn from_bytes(bytes: &Vec<u8>) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         if bytes.len() != mem::size_of::<Self>() {
             return Err(Error::from(ErrorKind::InvalidData));
         }
@@ -237,7 +237,7 @@ impl Display for SgxReport {
 }
 
 impl SgxReport {
-    pub fn from_bytes(bytes: &Vec<u8>) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         if bytes.len() != mem::size_of::<Self>() {
             return Err(Error::from(ErrorKind::InvalidData));
         }
@@ -270,7 +270,7 @@ impl Display for SgxQuote {
 
 impl SgxQuote {
     /// Parses raw quote bytes into `SgxQuote`.
-    pub fn from_bytes(bytes: &Vec<u8>) -> Result<Self> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let quote_size = bytes.len();
 
         // `SgxQuoteBody` is packed so we can do the math below.
